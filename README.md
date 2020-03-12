@@ -12,19 +12,19 @@ Python3 should be already installed. Also you should clone [e-diary](https://git
 
 2. Open the interactive shell:
 
-```
+``` python
 python3 manage.py shell
 ```
 
 3. Import the scripts:
 
-```
+``` python
 import scripts
 ```
 
 4. Run the scripts in the shell:
 
-```
+``` python
 scripts.fix_marks('Белозеров Авдей')
 scripts.remove_chastisements('Белозеров Авдей')
 scripts.create_commendation('Белозеров Авдей', 'Краеведение')
