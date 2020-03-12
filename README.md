@@ -30,7 +30,20 @@ scripts.remove_chastisements('Белозеров Авдей')
 scripts.create_commendation('Белозеров Авдей', 'Краеведение')
 ```
 
-`fix_marks` and `remove_chastisements` require you to input a student's name, while `create_commendation` requires both student's name and the title of the subject. It is recommended to use full names, as the scripts will not work if they find more than one match for the name input.
+`fix_marks` and `remove_chastisements` require you to input a student's name, while `create_commendation` requires both student's name and the title of the subject.
+
+It is recommended to use full names, as the scripts will not work if they find more than one match for the name input:
+
+``` python
+>>> scripts.fix_marks('Степан')
+get() returned more than one Schoolkid -- it returned 22!
+```
+Nor will they work if there are no students matching the name input:
+``` python
+>>> scripts.fix_marks('John')
+Schoolkid matching query does not exist.
+```
+
 
 ### Project Goals
 
