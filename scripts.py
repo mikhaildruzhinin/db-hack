@@ -7,32 +7,33 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import MultipleObjectsReturned
 import random
 
-def find_schoolkid(name):
+def get_schoolkid_and_error(name):
+    error = None
     try:
         kid = Schoolkid.objects.get(full_name__contains=name)
     except ObjectDoesNotExist as e:
-        return e
+        kid, error = None, e
     except MultipleObjectsReturned as e:
-        return e
-    return kid 
+        kid, error = None, e
+    return kid, error
 
 def fix_marks(name):
-    kid = find_schoolkid(name)
-    if type(kid) == Schoolkid:
+    kid, error = get_schoolkid_and_error(name)
+    if not error:
         bad_marks = Mark.objects.filter(schoolkid=kid, points__lte=3)
         for mark in bad_marks:
             mark.points = 5
             mark.save()
-    else:
-        print(kid)
+        return None
+    return error
 
 def remove_chastisements(name):
-    kid = find_schoolkid(name)
-    if type(kid) == Schoolkid:
+    kid, error = get_schoolkid_and_error(name)
+    if not error:
         chastisements = Chastisement.objects.filter(schoolkid=kid)
         chastisements.delete()
-    else:
-        print(kid)
+        return None
+    return error
 
 def create_commendation(name, subject):
     commendations = [
@@ -67,13 +68,13 @@ def create_commendation(name, subject):
         'Ты многое сделал, я это вижу!',
         'Теперь у тебя точно все получится!',
     ]
-    kid = find_schoolkid(name)
-    if type(kid) == Schoolkid:
+    kid, error = get_schoolkid_and_error(name)
+    if not error:
         lessons = Lesson.objects.filter(year_of_study=kid.year_of_study, group_letter=kid.group_letter, subject__title=subject)
         lessons = lessons.order_by('-date')
         latest_lesson = lessons[0]
         commendation = Commendation.objects.create(text=random.choice(commendations), created=latest_lesson.date, schoolkid=kid,
             subject=latest_lesson.subject, teacher=latest_lesson.teacher)
         commendation.save()
-    else:
-        print(kid)
+        return None
+    return error
