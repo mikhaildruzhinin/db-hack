@@ -19,21 +19,19 @@ def get_schoolkid_and_error(name):
 
 def fix_marks(name):
     kid, error = get_schoolkid_and_error(name)
-    if not error:
-        bad_marks = Mark.objects.filter(schoolkid=kid, points__lte=3)
-        for mark in bad_marks:
-            mark.points = 5
-            mark.save()
-        return None
-    return error
+    if error:
+        return error
+    bad_marks = Mark.objects.filter(schoolkid=kid, points__lte=3)
+    for mark in bad_marks:
+        mark.points = 5
+        mark.save()
 
 def remove_chastisements(name):
     kid, error = get_schoolkid_and_error(name)
-    if not error:
-        chastisements = Chastisement.objects.filter(schoolkid=kid)
-        chastisements.delete()
-        return None
-    return error
+    if error:
+        return error
+    chastisements = Chastisement.objects.filter(schoolkid=kid)
+    chastisements.delete()
 
 def create_commendation(name, subject):
     commendations = [
@@ -69,12 +67,11 @@ def create_commendation(name, subject):
         'Теперь у тебя точно все получится!',
     ]
     kid, error = get_schoolkid_and_error(name)
-    if not error:
-        lessons = Lesson.objects.filter(year_of_study=kid.year_of_study, group_letter=kid.group_letter, subject__title=subject)
-        lessons = lessons.order_by('-date')
-        latest_lesson = lessons[0]
-        commendation = Commendation.objects.create(text=random.choice(commendations), created=latest_lesson.date, schoolkid=kid,
-            subject=latest_lesson.subject, teacher=latest_lesson.teacher)
-        commendation.save()
-        return None
-    return error
+    if error:
+        return error
+    lessons = Lesson.objects.filter(year_of_study=kid.year_of_study, group_letter=kid.group_letter, subject__title=subject)
+    lessons = lessons.order_by('-date')
+    latest_lesson = lessons[0]
+    commendation = Commendation.objects.create(text=random.choice(commendations), created=latest_lesson.date, schoolkid=kid,
+        subject=latest_lesson.subject, teacher=latest_lesson.teacher)
+    commendation.save()
